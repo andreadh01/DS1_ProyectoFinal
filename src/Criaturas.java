@@ -26,15 +26,22 @@ public abstract class Criaturas extends Entidades {
         //movimiento a la derecha
         if (xMove>0){
             int tx=(int)(x+xMove+colision.x + colision.width)/Casillas.ANCHOCASILLA;
-            if (!colisionConCasilla(tx,(int)(y+colision.y)/Casillas.ALTOCASILLA) && !colisionConCasilla(tx,(int)(y+colision.y+colision.height)/Casillas.ALTOCASILLA)){
+            if (!colisionConCasilla(tx,(int)(y+colision.y)/Casillas.ALTOCASILLA) &&
+                    !colisionConCasilla(tx,(int)(y+colision.y+colision.height)/Casillas.ALTOCASILLA)){
                 x+=xMove;
+            }else {
+                x=tx*Casillas.ANCHOCASILLA-colision.x-colision.width-1;
             }
         }
         //movimiento a la izquierda
-        else if (xMove<0){
-            int tx=(int)(x+xMove+colision.x)/Casillas.ANCHOCASILLA;
-            if (!colisionConCasilla(tx,(int)(y+colision.y)/Casillas.ALTOCASILLA) && !colisionConCasilla(tx,(int)(y+colision.y+colision.height)/Casillas.ALTOCASILLA))
-            x+=xMove;
+        else if (xMove<0) {
+            int tx = (int) (x + xMove + colision.x) / Casillas.ANCHOCASILLA;
+            if (!colisionConCasilla(tx, (int) (y + colision.y) / Casillas.ALTOCASILLA) &&
+                    !colisionConCasilla(tx, (int) (y + colision.y + colision.height) / Casillas.ALTOCASILLA)) {
+                x += xMove;
+            } else {
+                x = tx * Casillas.ANCHOCASILLA + Casillas.ANCHOCASILLA - colision.x;
+            }
         }
     }
 
