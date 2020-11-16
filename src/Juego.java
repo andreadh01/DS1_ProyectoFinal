@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Juego implements Runnable{
     private Pantalla pantalla;
-    public int ancho, alto;
+    private int ancho, alto;
     public String titulo;
 
     private Thread hilo;
@@ -13,10 +13,18 @@ public class Juego implements Runnable{
     private BufferStrategy bs;
     private Graphics g;
 
+    //States
+    private State gameState;
+    private State menuState;
 
+    //Controles
+    private Teclado teclado;
 
+    //Camara
+    private Camara camara;
 
-
+    //Controlador
+    private Controlador controlador;
 
 
     //este constructor sirve para que cuando se cree un juego,
@@ -25,18 +33,30 @@ public class Juego implements Runnable{
         this.ancho = ancho;
         this.alto = alto;
         this.titulo=titulo;
+        teclado=new Teclado();
     }
 
 
     //este metodo hara que aparezca la pantalla y las imagenes
     private void inicializar(){
         pantalla=new Pantalla(titulo,ancho,alto);
+        pantalla.getPantalla().addKeyListener(teclado);
+        Assets.inicializar();
+        camara=new Camara(this,0,0);
+        controlador=new Controlador(this);
 
-
+        gameState= new GameState(controlador);
+        menuState=new MenuState(controlador);
+        State.setState(gameState);
     }
+
     private void actualizar() {
-
+        teclado.tick();
+        if (State.getState() !=null){
+            State.getState().tick();
+        }
     }
+
     private void dibujar() {
         bs=pantalla.getGraficos().getBufferStrategy();
         if(bs==null) {
@@ -52,26 +72,57 @@ public class Juego implements Runnable{
 
         //imagenes
 
+        if (State.getState() !=null){
+            State.getState().dibujar(g);
+        }
+
         //mostrar los graficos
         bs.show();
         g.dispose();
-
-
     }
 
     //en este metodo se programara gran parte del juego
     public void run(){
         inicializar();
+        int fps=60;
+        double tiempoPorActualizacion=1000000000/fps;
+        double delta=0;
+        long now;
+        long lastTime=System.nanoTime();
+        long timer=0;
+        int ticks=0;
+
         while(running){
             //mientras el juego este corriendo, se deben actualizar las imagenes y movimientos
-            actualizar();
-            dibujar();
+            //revisa el tiempo que le toma ejecutar el juego para mantenerlo estable a 60fps
+            now=System.nanoTime();
+            delta+=(now-lastTime)/tiempoPorActualizacion;
+            timer+=now-lastTime;
+            lastTime=now;
+
+            if(delta>=1) {
+                actualizar();
+                dibujar();
+                ticks++;
+                delta--;
+            }
+
+            //contador de fps
+            if(timer>=1000000000){
+                System.out.println("Ticks and frames: "+ticks);
+                ticks=0;
+                timer=0;
+            }
 
         }
 
         //lo detenemos aqui en caso de que no se haya detenido con el false
         stop();
 
+    }
+
+    public Teclado getTeclado(){
+        return teclado;
     }
 
     //metodo para empezar el hilo
@@ -84,6 +135,19 @@ public class Juego implements Runnable{
         hilo.start();
 
     }
+
+    public Camara getCamara(){
+        return camara;
+    }
+
+    public int getAncho(){
+        return ancho;
+    }
+
+    public int getAlto(){
+        return alto;
+    }
+
 
     //metodo para detener el hilo
     public synchronized void stop() {

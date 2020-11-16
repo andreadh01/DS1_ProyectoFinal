@@ -40,6 +40,7 @@ public class Pantalla {
         //esto sirve para que se queden del mismo tamaño los gráficos
         graficos.setMinimumSize(new Dimension(ancho, alto));
         graficos.setMaximumSize(new Dimension(ancho, alto));
+        graficos.setFocusable(false);
 
         //agregar los gráficos a la pantalla
         pantalla.add(graficos);
@@ -49,5 +50,9 @@ public class Pantalla {
 
     public Canvas getGraficos() {
         return graficos;
+    }
+
+    public JFrame getPantalla(){
+        return pantalla;
     }
 }
