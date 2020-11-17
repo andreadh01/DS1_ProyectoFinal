@@ -1,6 +1,11 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Jugador extends Criaturas {
+    //Animaciones
+    private Animacion anim_abajo, anim_arriba, anim_izq, anim_der;
+
+
     public Jugador(Controlador controlador,float x, float y) {
         super(controlador, x, y, Criaturas.CRIATURA_ANCHO_BASE, Criaturas.CRIATURA_ALTO_BASE);
 
@@ -8,10 +13,24 @@ public class Jugador extends Criaturas {
         colision.y=20;
         colision.width=40;
         colision.height=80;
+
+
+        //Inicializar animaciones
+        anim_abajo=new Animacion(500,Assets.jugador_abajo);
+        anim_arriba=new Animacion(500, Assets.jugador_arriba);
+        anim_izq=new Animacion(500, Assets.jugador_izq);
+        anim_der=new Animacion(500,Assets.jugador_der);
     }
 
     @Override
-    public void thick() {
+    public void tick() {
+        //Animaciones
+        anim_abajo.tick();
+        anim_arriba.tick();
+        anim_izq.tick();
+        anim_der.tick();
+
+        //Movimiento
         leerTeclado();
         mover();
         controlador.getCamara().centrarEnEntidad(this);
@@ -29,9 +48,20 @@ public class Jugador extends Criaturas {
 
     @Override
     public void dibujar(Graphics g) {
-        g.drawImage(Assets.charfr2,(int)(x-controlador.getCamara().getxOffset()),(int)(y-controlador.getCamara().getyOffset()),ancho, alto,null);
+        g.drawImage(getAnimacionFrameActual(),(int)(x-controlador.getCamara().getxOffset()),(int)(y-controlador.getCamara().getyOffset()),ancho, alto,null);
+    }
 
-        g.setColor(Color.RED);
-        g.fillRect((int)(x + colision.x - controlador.getJuego().getCamara().getxOffset()),(int)(y + colision.y - controlador.getJuego().getCamara().getyOffset()), colision.width, colision.height);
+    private BufferedImage getAnimacionFrameActual() {
+        if (xMove < 0) {
+            return anim_izq.getCurrentFrame();
+        } else if (xMove > 0) {
+            return anim_der.getCurrentFrame();
+        } else if (yMove < 0) {
+            return anim_arriba.getCurrentFrame();
+        } else if (yMove>0){
+            return anim_abajo.getCurrentFrame();
+        }else{
+            return Assets.jugador_still;
+        }
     }
 }

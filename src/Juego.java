@@ -14,11 +14,12 @@ public class Juego implements Runnable{
     private Graphics g;
 
     //States
-    private State gameState;
-    private State menuState;
+    public State gameState;
+    public State menuState;
 
     //Controles
     private Teclado teclado;
+    private MouseAdmin mouseAdmin;
 
     //Camara
     private Camara camara;
@@ -34,6 +35,7 @@ public class Juego implements Runnable{
         this.alto = alto;
         this.titulo=titulo;
         teclado=new Teclado();
+        mouseAdmin=new MouseAdmin();
     }
 
 
@@ -41,13 +43,18 @@ public class Juego implements Runnable{
     private void inicializar(){
         pantalla=new Pantalla(titulo,ancho,alto);
         pantalla.getPantalla().addKeyListener(teclado);
+        pantalla.getPantalla().addMouseListener(mouseAdmin);
+        pantalla.getPantalla().addMouseMotionListener(mouseAdmin);
+        pantalla.getGraficos().addMouseListener(mouseAdmin);
+        pantalla.getGraficos().addMouseMotionListener(mouseAdmin);
         Assets.inicializar();
-        camara=new Camara(this,0,0);
+
         controlador=new Controlador(this);
+        camara=new Camara(controlador,0,0);
 
         gameState= new GameState(controlador);
         menuState=new MenuState(controlador);
-        State.setState(gameState);
+        State.setState(menuState);
     }
 
     private void actualizar() {
@@ -134,6 +141,10 @@ public class Juego implements Runnable{
         //sirve para llamar el metodo run
         hilo.start();
 
+    }
+
+    public MouseAdmin getMouseAdmin(){
+        return mouseAdmin;
     }
 
     public Camara getCamara(){

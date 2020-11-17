@@ -17,9 +17,26 @@ public abstract class Entidades {
         colision=new Rectangle(0,0,ancho,alto);
     }
 
-    public abstract void thick();
+    public abstract void tick();
 
     public abstract void dibujar(Graphics g);
+
+    public boolean checkColisionEntidad(float xOffset, float yOffset){
+        for (Entidades e : controlador.getMundo().getEntidadesAdmin().getEntidades()) {
+            if(e.equals(this)){
+                continue;
+            }
+            if (e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset,yOffset))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Rectangle getCollisionBounds(float xOffset, float yOffset){
+        return new Rectangle((int)(x+colision.x+xOffset), (int)(y+colision.y+yOffset), colision.width, colision.height);
+    }
+
 
     public float getX() {
         return x;

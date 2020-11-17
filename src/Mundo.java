@@ -7,14 +7,22 @@ public class Mundo {
     private int spawnX,spawnY;
     private int[][] casillas;
 
+    //entidades
+    private EntidadesAdmin entidadesAdmin;
+
     //genera el mundo
     public Mundo(Controlador controlador,String path){
         this.controlador=controlador;
+        entidadesAdmin=new EntidadesAdmin(controlador, new Jugador(controlador,100,100));
+
         cargarMundo(path);
+        entidadesAdmin.getJugador().setX(spawnX);
+        entidadesAdmin.getJugador().setY(spawnY);
     }
 
     //Esta parte actualiza el controlador y hace que corra
     public void tick(){
+        entidadesAdmin.tick();
 
     }
 
@@ -32,6 +40,8 @@ public class Mundo {
                 getCasilla(x,y).dibujar(g,(int)(x*Casillas.ANCHOCASILLA-controlador.getCamara().getxOffset()),(int)(y*Casillas.ALTOCASILLA-controlador.getCamara().getyOffset()));
             }
         }
+        //entidades
+        entidadesAdmin.dibujar(g);
     }
 
     //getCasillas sirve para generar las casillas desde la clase Casillas
@@ -63,5 +73,17 @@ public class Mundo {
             }
         }
 
+    }
+
+    public int getAncho(){
+        return ancho;
+
+    }
+    public int getAlto(){
+        return alto;
+    }
+
+    public EntidadesAdmin getEntidadesAdmin() {
+        return entidadesAdmin;
     }
 }

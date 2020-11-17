@@ -23,6 +23,8 @@ public class Controlador {
        return juego.getTeclado();
     }
 
+    public MouseAdmin getMouseAdmin(){ return juego.getMouseAdmin();}
+
     public Juego getJuego() {
         return juego;
     }
