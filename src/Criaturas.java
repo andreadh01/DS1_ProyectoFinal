@@ -18,10 +18,10 @@ public abstract class Criaturas extends Entidades {
     }
 
     public void mover(){
-        if(!checkColisionEnitdad(xMove,0f)) {
+        if(!checkColisionEntidad(xMove,0f)) {
             moveX();
         }
-        if(!checkColisionEnitdad(0f,yMove)) {
+        if(!checkColisionEntidad(0f,yMove)) {
             moveY();
         }
     }
